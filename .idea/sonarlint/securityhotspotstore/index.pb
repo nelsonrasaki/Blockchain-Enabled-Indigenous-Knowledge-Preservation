@@ -15,3 +15,7 @@ H
 tests/attibution.test.ts,f/f/ff366c04cb9df17dbd43ada426dbf05695ece2ea
 O
 contracts/benefits-sharing.clar,7/e/7e70d892ebfba826137d2c99b62be489fb963b55
+N
+tests/benefits-sharing.test.ts,1/b/1be26df50396fc41bc74d497643c646171601b73
+T
+$tests/knowledge-registration.test.ts,0/e/0ef59241496cd45ec1673e480a1d72f3ad64b061

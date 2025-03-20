@@ -1,30 +1,43 @@
+;; Knowledge Registration Contract
+;; Securely records traditional practices
 
-;; title: knowledge-registration
-;; version:
-;; summary:
-;; description:
+(define-data-var last-knowledge-id uint u0)
 
-;; traits
-;;
+(define-map knowledge-records
+  { knowledge-id: uint }
+  {
+    title: (string-utf8 100),
+    description: (string-utf8 500),
+    owner: principal,
+    timestamp: uint,
+    metadata-url: (optional (string-utf8 255))
+  }
+)
 
-;; token definitions
-;;
+(define-public (register-knowledge (title (string-utf8 100)) (description (string-utf8 500)) (metadata-url (optional (string-utf8 255))))
+  (let
+    (
+      (new-id (+ (var-get last-knowledge-id) u1))
+    )
+    (map-set knowledge-records
+      { knowledge-id: new-id }
+      {
+        title: title,
+        description: description,
+        owner: tx-sender,
+        timestamp: block-height,
+        metadata-url: metadata-url
+      }
+    )
+    (var-set last-knowledge-id new-id)
+    (ok new-id)
+  )
+)
 
-;; constants
-;;
+(define-read-only (get-knowledge (knowledge-id uint))
+  (ok (map-get? knowledge-records { knowledge-id: knowledge-id }))
+)
 
-;; data vars
-;;
-
-;; data maps
-;;
-
-;; public functions
-;;
-
-;; read only functions
-;;
-
-;; private functions
-;;
-
+(define-read-only (get-knowledge-count)
+  (ok (var-get last-knowledge-id))
+)
