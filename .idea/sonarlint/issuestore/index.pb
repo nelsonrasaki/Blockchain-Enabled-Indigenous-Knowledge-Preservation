@@ -13,3 +13,5 @@ I
 contracts/attibution.clar,2/0/20a50818d8568ccc7f2fcf72ddf97ff90f389d63
 H
 tests/attibution.test.ts,f/f/ff366c04cb9df17dbd43ada426dbf05695ece2ea
+O
+contracts/benefits-sharing.clar,7/e/7e70d892ebfba826137d2c99b62be489fb963b55

@@ -1,30 +1,59 @@
+;; Benefit Sharing Contract
+;; Manages compensation for commercial applications
 
-;; title: benefits-sharing
-;; version:
-;; summary:
-;; description:
+(define-map benefit-agreements
+  { knowledge-id: uint, user: principal }
+  {
+    payment-amount: uint,
+    payment-frequency: uint,
+    last-payment: uint,
+    active: bool
+  }
+)
 
-;; traits
-;;
+(define-map benefit-recipients
+  { knowledge-id: uint }
+  { recipients: (list 10 { recipient: principal, share: uint }) }
+)
 
-;; token definitions
-;;
+(define-public (create-benefit-agreement (knowledge-id uint)
+                                        (payment-amount uint)
+                                        (payment-frequency uint))
+  (ok (map-set benefit-agreements
+    { knowledge-id: knowledge-id, user: tx-sender }
+    {
+      payment-amount: payment-amount,
+      payment-frequency: payment-frequency,
+      last-payment: u0,
+      active: true
+    }
+  ))
+)
 
-;; constants
-;;
+(define-public (set-benefit-recipients (knowledge-id uint)
+                                      (recipients (list 10 { recipient: principal, share: uint })))
+  (ok (map-set benefit-recipients
+    { knowledge-id: knowledge-id }
+    { recipients: recipients }
+  ))
+)
 
-;; data vars
-;;
+(define-public (make-payment (knowledge-id uint))
+  (let
+    (
+      (agreement (map-get? benefit-agreements { knowledge-id: knowledge-id, user: tx-sender }))
+      (recipients-data (map-get? benefit-recipients { knowledge-id: knowledge-id }))
+    )
+    (asserts! (and (is-some agreement) (get active (unwrap-panic agreement))) (err u403))
+    (asserts! (is-some recipients-data) (err u404))
 
-;; data maps
-;;
+    ;; In a real implementation, would distribute payment to all recipients
+    ;; based on their shares
 
-;; public functions
-;;
-
-;; read only functions
-;;
-
-;; private functions
-;;
-
+    (map-set benefit-agreements
+      { knowledge-id: knowledge-id, user: tx-sender }
+      (merge (unwrap-panic agreement) { last-payment: block-height })
+    )
+    (ok true)
+  )
+)
